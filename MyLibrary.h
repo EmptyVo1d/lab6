@@ -9,7 +9,6 @@ typedef struct Elist {
     struct Elist *next;
 } Elist;
 typedef struct list {
-    int len;
     Elist *head;
 } list;
 
