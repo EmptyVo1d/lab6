@@ -1,145 +1,55 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include "MyLibrary.h"
+#include <stdlib.h>
+#include <stdio.h>
 
-list *modernization(list *str) {
 
-    Elist *previous;
-    Elist *current;
-    Elist *fromto_structure;
-    Elist *word_structure;
-    Elist *upto_structure;
-
-    if (str->head != NULL) {
-        previous = str->head;
-        current = str->head;
+int areEqual(Elist* w1, Elist* w2) {
+    Elist* c1 = w1;
+    Elist* c2 = w2;
+    while ((c1 != NULL && c1->element != ' ') && (c2 != NULL && c2->element != ' ')) {
+        if (c1->element != c2->element) return 0;
+        c1 = c1->next;
+        c2 = c2->next;
     }
-    else {
-        printf("Error: head element is NULL");
-        return str;
-    }
-
-    int size_word = 0;
-    int num_match = 0;
-    int flag = 0;
-    int flag_ft = 0;
-    int flag_act = 0;
-    int flag_n = 0;
-
-    while (current != NULL) {
-
-        char *word = malloc((size_word + 1) * sizeof(char));
-        if (word == NULL) {
-            printf("error allocating memory");
-            exit(-1);
-        }
-        word[0] = '\0';
-
-        if (current->element == '\0') break;
-
-        if (current->element != ' ') {
-
-            flag_n = 1;
-
-            fromto_structure = previous;
-            word_structure = previous;
-
-            while (current->element != ' ') {
-
-                if (current->element == '\0') break;
-
-                size_word++;
-
-                word = realloc(word, size_word + 1);
-                word[size_word - 1] = current->element;
-                word[size_word] = '\0';
-                if (current->next != NULL) {
-                    previous = current;
-                    current = current->next;
-                }
-
-            }
-
-            // получим отрезок для удаления
-
-            while (!flag) {
-
-                word_structure = previous;
-                while (current->element == ' ') {
-                    if (current->element == '\0') break;
-                    previous = current;
-                    current = current->next;
-                }
+    if ((c1 == NULL || c1->element == ' ') && (c2 == NULL || c2->element == ' '))
+        return 1;
+    return 0;
+}
 
 
+void modernize(list* str) {
+    size_t counter = 1;
 
-                for (int i = 0; word[i] == current->element; i++) {
-                    num_match++;
-                    if (size_word == 1) {
-                        previous = current;
-                        current = current->next;
-                        break;
-                    }
-                    else if (current->next->element == '\0') break;
+    Elist* nH = calloc(1, sizeof(Elist));
+    nH->next = str->head;
+    nH->element = ' ';
+    str->head = nH;
 
-                    else {
-                        previous = current;
-                        current = current->next;
-                    }
+    Elist* start = str->head;
 
-                }
-
-                if ((current->element != ' ' ) && (current->element != '\0') && (current->next->element != '\0')) {
-                    break;
-                }
-                if (current->next != NULL) { if ((size_word == 1) && (current->next->element == '\0')) {break;}}
-
-
-                if (num_match == size_word) {
-                    flag_act = 1;//
-                    flag_ft = 1;
-                    word_structure = previous;
-                    if (size_word == 1) upto_structure = previous;
-                    else { upto_structure = current; }
-                }
+    Elist* cur = str->head->next;
+    while (cur != NULL) {
+        if (cur->element == ' ') {
+            if (areEqual(start->next, cur->next))
+                counter++;
+            else {
+                if (counter == 1)
+                    start = cur;
                 else {
-                    flag = 1;
+                    Elist* next = cur->next;
+
+                    Elist* cur2 = start->next;
+                    while (cur2 != cur->next) {
+                        Elist* n = cur2->next;
+                        free(cur2);
+                        cur2 = next;
+                    }
+
+                    start->next = next;
+                    counter = 1;
                 }
-
-                num_match = 0;
-                flag_ft = 0;
-
             }
-            //удалить определенный отрезок
-            if (flag_act == 1) {
-                if (fromto_structure == str->head) {
-                    str->head = upto_structure->next;
-                }
-                else if (fromto_structure->next == str->head) {
-                    str->head = upto_structure->next;
-                }
-
-                fromto_structure->next = upto_structure->next;
-            }
-
         }
-
-        if ((flag_act == 0) && (flag_n == 1)) {
-            previous = word_structure;
-            current = previous->next;
-        }
-        else if (flag_n == 0) {
-            previous =current;
-            current = current->next;
-        }
-        if (word != NULL) free(word);
-        size_word = 0;
-        num_match = 0;
-        flag = 0;
-        flag_ft = 0;
-        flag_act = 0;
-        flag_n = 0;
+        cur = cur->next;
     }
-
-    return str;
 }

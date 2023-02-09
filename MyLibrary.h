@@ -14,10 +14,14 @@ typedef struct list {
 
 list *inputStr(list *str);
 
-list *modernization(list *str);
+int areEqual(Elist* w1, Elist* w2);
+
+void modernize(list* str);
 
 void MyFree(list *str);
 
 void MyPrint(list *str);
+
+void deleteSpaces(list* str);
 
 #endif //LAB6_MYLIBRARY_H

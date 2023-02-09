@@ -3,18 +3,17 @@
 #include "MyLibrary.h"
 
 list *inputStr(list *str){
-    Elist *el = (Elist *) malloc(sizeof(Elist));
+    Elist *el = calloc(1, sizeof(Elist));
     str->head = el;
     char point;
-    while ((point = getchar())) {
+    while (point = getchar()) {
         if (point == '\n') break;
         el->element = point;
-        Elist *newEl = (Elist *) malloc(sizeof(Elist));
+        Elist *newEl = calloc(1, sizeof(Elist));
         el->next = newEl;
         el = newEl;
     }
-    el->element = '\0';
+    el->element = ' ';
     el->next = NULL;
-    el = NULL;
     return str;
 }
